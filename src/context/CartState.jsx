@@ -24,7 +24,7 @@ const CartState = ({ children }) => {
   useEffect(() => {
     const fetchCartFromDb = async () => {
       if (authLoading || !isAuthenticated) {
-        return <Navigate to="/login" replace={true} />;
+        return;
       }
 
       try {
