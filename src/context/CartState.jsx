@@ -1,11 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext.jsx"; // Tu hook de autenticación
 import axios from "../api/axios.js"; // Tu instancia customizada de Axios
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 const CartContext = createContext();
-const navigate = useNavigate();
 
 const CartState = ({ children }) => {
   const [cart, setCart] = useState(() => {
@@ -27,8 +24,7 @@ const CartState = ({ children }) => {
   useEffect(() => {
     const fetchCartFromDb = async () => {
       if (authLoading || !isAuthenticated) {
-        navigate("/");
-        toast("Debes iniciar sesion para continuar con tu compra!");
+        return <Navigate to="/login" replace={true} />;
       }
 
       try {
