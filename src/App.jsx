@@ -20,6 +20,7 @@ import SuccessPage from "./components/SuccessPage";
 import PendingPage from "./components/PendingPage";
 import FailurePage from "./components/FailurePage";
 import NotFoundPage from "./components/NotFoundPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -36,6 +37,7 @@ function App() {
     <AuthProvider>
       <CartState>
         <Router>
+          <ScrollToTop />
           <Nav />
           <Routes>
             <Route path="/" element={<Home />} />
