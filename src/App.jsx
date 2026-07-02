@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import Home from "./components/Home";
 import Nav from "./components/Nav";
@@ -23,11 +24,12 @@ import NotFoundPage from "./components/NotFoundPage";
 import ScrollToTop from "./components/ScrollToTop";
 
 const AdminRoute = ({ children }) => {
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
   if (!token || role !== "admin") {
-    return <Navigate to="/" replace />;
+    navigate("/");
   }
 
   return children;
