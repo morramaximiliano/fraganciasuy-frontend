@@ -1,11 +1,12 @@
 import axios from "axios";
 
 const apiBaseUrl =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
+  import.meta.env.VITE_API_URL ||
+  "https://fraganciasuy-backend.onrender.com/api/v1";
 
 const api = axios.create({
   baseURL: apiBaseUrl,
-  timeout: 5000,
+  timeout: 10000,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
