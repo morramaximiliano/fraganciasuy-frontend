@@ -1,6 +1,6 @@
 # FraganciasUY Frontend
 
-Aplicacion frontend de e-commerce para fragancias, desarrollada con React y Vite.
+Aplicacion frontend de e-commerce para fragancias, desarrollada con React y Vite
 
 Incluye flujo completo de compra (catalogo, carrito, checkout), autenticacion de usuarios, panel administrativo y estados de pago con Mercado Pago.
 
