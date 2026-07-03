@@ -136,7 +136,7 @@ const AdminTables = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-900/50">
-          {categories.map((item) => (
+          {brands.map((item) => (
             <tr key={item.id} className="text-gray-300 hover:bg-gray-900/10">
               <td className="p-4 pl-6 text-gray-500 font-mono">{item.id}</td>
               <td className="p-4 font-medium text-white">{item.name}</td>
