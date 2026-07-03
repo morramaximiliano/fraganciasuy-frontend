@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const [skus, setSkus] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
@@ -23,6 +24,7 @@ const AdminDashboard = () => {
     { id: "skus", label: "Variantes (SKUs)" },
     { id: "categories", label: "Categorías" },
     { id: "brands", label: "Marcas" },
+    { id: "orders", label: "Ordenes" },
   ];
 
   const handleEditClick = (element) => {
@@ -66,16 +68,18 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [resProd, resSku, resCat, resBrand] = await Promise.all([
+      const [resProd, resSku, resCat, resBrand, resOrders] = await Promise.all([
         axios.get(`/products`),
         axios.get(`/skus`),
         axios.get(`/categories`),
         axios.get(`/brands`),
+        axios.get(`/orders`),
       ]);
       setProducts(resProd.data.products || resProd.data);
       setSkus(resSku.data.skus || resSku.data);
       setCategories(resCat.data.categories || resCat.data);
       setBrands(resBrand.data.brands || resBrand.data);
+      setOrders(resOrders.data.orders || resOrders.data);
     } catch (error) {
       console.error("Error cargando datos:", error);
     }
@@ -156,7 +160,7 @@ const AdminDashboard = () => {
             <AdminTables
               activeTab={activeTab}
               onEdit={handleEditClick}
-              data={{ products, skus, categories, brands }}
+              data={{ products, skus, categories, brands, orders }}
               onDelete={handleDeleteClick}
             />
           </div>
