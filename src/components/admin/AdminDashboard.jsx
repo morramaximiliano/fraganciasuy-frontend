@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "../../api/axios.js";
-import { PlusLg } from "react-bootstrap-icons";
+import { PlusLg, List, X, ArrowRight } from "react-bootstrap-icons";
 import AdminSidebar from "./AdminSidebar";
 import AdminTables from "./AdminTables";
 import AdminModalForm from "./AdminModalForm";
@@ -16,6 +16,14 @@ const AdminDashboard = () => {
   const [skus, setSkus] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const menuItems = [
+    { id: "products", label: "Productos Base" },
+    { id: "skus", label: "Variantes (SKUs)" },
+    { id: "categories", label: "Categorías" },
+    { id: "brands", label: "Marcas" },
+  ];
 
   const handleEditClick = (element) => {
     setEditingElement(element);
@@ -100,6 +108,26 @@ const AdminDashboard = () => {
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full overflow-hidden">
+        <div className="md:hidden mb-6 flex items-center gap-3">
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-gray-800 bg-gray-900/60 text-white transition-colors hover:border-purple-500 hover:text-purple-300"
+            aria-label="Abrir menú"
+          >
+            <List size={22} />
+          </motion.button>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs uppercase tracking-[0.3em] text-gray-500">
+              Panel
+            </p>
+            <p className="truncate text-sm text-gray-300">
+              {menuItems.find((item) => item.id === activeTab)?.label}
+            </p>
+          </div>
+        </div>
+
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
           <div>
             <h1 className="font-display text-3xl text-white tracking-wide">
@@ -134,6 +162,81 @@ const AdminDashboard = () => {
           </div>
         </section>
       </main>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Cerrar menú"
+              className="fixed inset-0 z-40 bg-black/60 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.aside
+              className="fixed left-0 top-0 z-50 h-full w-80 max-w-[85vw] border-r border-gray-900 bg-gray-950 p-6 md:hidden"
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              transition={{ type: "tween", ease: "easeInOut", duration: 0.22 }}
+            >
+              <div className="mb-8 flex items-center justify-between">
+                <div className="font-display text-2xl tracking-wider text-white">
+                  Gestión
+                  <span className="text-purple-400 italic font-medium">
+                    Panel
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-800 text-gray-300 transition-colors hover:border-gray-700 hover:text-white"
+                  aria-label="Cerrar menú"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <nav className="space-y-2">
+                {menuItems.map((item) => {
+                  const isActive = activeTab === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                        isActive
+                          ? "border-purple-500 bg-purple-950/40 text-purple-300"
+                          : "border-gray-800 bg-gray-900/40 text-gray-300 hover:border-gray-700 hover:text-white"
+                      }`}
+                    >
+                      <span className="block font-medium leading-tight">
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="mt-6 border-t border-gray-900 pt-6">
+                <a
+                  href="/"
+                  className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-gray-500 transition-colors hover:text-purple-400"
+                >
+                  Volver a la tienda <ArrowRight />
+                </a>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         <AdminModalForm
