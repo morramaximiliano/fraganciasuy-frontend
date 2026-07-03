@@ -80,6 +80,7 @@ const AdminDashboard = () => {
       setCategories(resCat.data.categories || resCat.data);
       setBrands(resBrand.data.brands || resBrand.data);
       setOrders(resOrders.data.orders || resOrders.data);
+      console.log(orders);
     } catch (error) {
       console.error("Error cargando datos:", error);
     }
