@@ -73,7 +73,7 @@ const AdminDashboard = () => {
         axios.get(`/skus`),
         axios.get(`/categories`),
         axios.get(`/brands`),
-        axios.get(`/orders`),
+        axios.get(`/orders/all`),
       ]);
       setProducts(resProd.data.products || resProd.data);
       setSkus(resSku.data.skus || resSku.data);
