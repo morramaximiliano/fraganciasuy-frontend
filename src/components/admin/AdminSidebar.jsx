@@ -6,6 +6,7 @@ import {
   PlusLg,
   ArrowRight,
   BookmarkStar,
+  Box,
 } from "react-bootstrap-icons";
 
 const AdminSidebar = ({ activeTab, setActiveTab }) => {
@@ -14,6 +15,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
     { id: "skus", label: "Variantes (SKUs)", icon: <PlusLg /> },
     { id: "categories", label: "Categorías", icon: <Tags /> },
     { id: "brands", label: "Marcas", icon: <BookmarkStar /> },
+    { id: "orders", label: "Ordenes", icon: <Box /> },
   ];
 
   return (
