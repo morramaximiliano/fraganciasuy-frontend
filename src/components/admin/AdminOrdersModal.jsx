@@ -27,7 +27,7 @@ const AdminOrdersModal = ({
           {order.details.map((p) => {
             return (
               <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
-                Productos: - {p.sku.product.name}
+                Productos: - {p.sku.product.name} {p.sku.sizeMl}ml
               </h3>
             );
           })}
