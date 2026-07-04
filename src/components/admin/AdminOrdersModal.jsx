@@ -14,12 +14,16 @@ const AdminOrdersModal = ({ activeTab, isOpen, handleCloseModal, order }) => {
       />
       <div className="p-6 border-b border-gray-800 flex justify-between items-center">
         <h3 className="text-lg font-medium text-white">
-          Detalles de la Orden #{order.id}
+          Detalles de la Orden #{order.id}, usuario con id #{order.userId}
         </h3>
         <div className="flex flex-col gap-4">
-          <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
-            Productos: {order.sku.product.name}
-          </h3>
+          {order.details.map((p) => {
+            return (
+              <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
+                Productos: - {order.sku.product.name}
+              </h3>
+            );
+          })}
           <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
             Cantidad: {order.quantity}
           </h3>
