@@ -4,15 +4,15 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Home from "./components/Home";
-import Nav from "./components/Nav";
+import Home from "./components/sections/Home";
+import Nav from "./components/sections/Nav";
 import CartState from "./context/CartState";
 import CartContainer from "./components/CartContainer";
 import { ToastContainer } from "react-toastify";
 import ProductsContainer from "./components/ProductsContainer";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import LoginForm from "./components/admin/LoginForm";
-import RegisterForm from "./components/admin/RegisterForm";
+import AdminDashboard from "./components/admin/dashboard/AdminDashboard";
+import LoginForm from "./components/admin/auth/LoginForm";
+import RegisterForm from "./components/admin/auth/RegisterForm";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthContext";
 import { useEffect } from "react";
