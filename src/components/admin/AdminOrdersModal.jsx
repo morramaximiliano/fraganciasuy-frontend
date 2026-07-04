@@ -67,7 +67,7 @@ const AdminOrdersModal = ({
                 Total
               </span>
               <p className="mt-2 text-sm font-medium text-white">
-                ${order?.totalAmount ?? "0"}
+                ${order?.totalAmount ?? "0"} UYU
               </p>
             </div>
             <div className="rounded-2xl border border-gray-800 bg-gray-950/60 p-4">

@@ -75,7 +75,9 @@ const AdminTables = ({
                   {s.stock} u.
                 </span>
               </td>
-              <td className="p-4 text-purple-400 font-medium">${s.price}</td>
+              <td className="p-4 text-purple-400 font-medium">
+                ${s.price} UYU
+              </td>
               <td className="p-4 pr-6 text-right flex gap-2 justify-end">
                 <button
                   onClick={() => onEdit(s)}
@@ -187,7 +189,7 @@ const AdminTables = ({
                 {order.paymentMethod}
               </td>
               <td className="p-4 font-medium text-white">
-                {order.totalAmount}
+                {order.totalAmount} UYU
               </td>
               <td className="p-4 font-medium text-white">{order.status}</td>
               <td className="p-4 font-medium text-white">

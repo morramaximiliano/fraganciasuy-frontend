@@ -123,7 +123,7 @@ const ProductsContainer = () => {
                     {selectedProduct.description}
                   </p>
                   {selectedSku && (
-                    <p className="text-white">${selectedSku.price}US</p>
+                    <p className="text-white">${selectedSku.price} UYU</p>
                   )}
                   <div>
                     <p className="mb-2 text-sm font-medium text-gray-300">

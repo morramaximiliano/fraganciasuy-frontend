@@ -245,7 +245,7 @@ const AdminModalForm = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-gray-400 block mb-2">
-                    Precio ($)
+                    Precio (UYU)
                   </label>
                   <input
                     type="number"
