@@ -75,11 +75,11 @@ const AdminDashboard = () => {
         axios.get(`/brands`),
         axios.get(`/orders/all`),
       ]);
-      setProducts(resProd.data.products || resProd.data);
-      setSkus(resSku.data.skus || resSku.data);
-      setCategories(resCat.data.categories || resCat.data);
-      setBrands(resBrand.data.brands || resBrand.data);
-      setOrders(resOrders.data.orders || resOrders.data);
+      setProducts(resProd.data.products);
+      setSkus(resSku.data.skus);
+      setCategories(resCat.data.categories);
+      setBrands(resBrand.data.brands);
+      setOrders(resOrders.data.orders);
       console.log(resOrders);
     } catch (error) {
       console.error("Error cargando datos:", error);
