@@ -129,11 +129,11 @@ const CartContainer = () => {
 
                     <div className="text-center sm:text-right font-sans min-w-[100px]">
                       <p className="text-lg font-semibold text-white tracking-wide">
-                        ${product.item.price * product.qty} USD
+                        ${product.item.price * product.qty} UYU
                       </p>
                       {product.qty > 1 && (
                         <p className="text-xs text-gray-500 font-light mt-0.5">
-                          ${product.item.price} USD c/u
+                          ${product.item.price} UYU c/u
                         </p>
                       )}
                     </div>
@@ -148,7 +148,7 @@ const CartContainer = () => {
                   Total estimado
                 </h3>
                 <p className="font-sans text-3xl font-bold tracking-tight text-white">
-                  ${total} USD
+                  ${total} UYU
                 </p>
               </div>
               <div>

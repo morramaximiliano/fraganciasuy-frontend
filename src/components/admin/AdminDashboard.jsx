@@ -55,7 +55,6 @@ const AdminDashboard = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`/${activeTab}/${id}`);
-
         toast.success("Eliminado correctamente");
         fetchData();
       } catch (error) {
