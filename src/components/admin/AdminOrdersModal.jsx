@@ -33,16 +33,15 @@ const AdminOrdersModal = ({
           </div>
           <div className="flex w-full flex-col gap-4">
             {order?.details?.map((item) => (
-              <h3
-                key={item.id ?? `${item.sku?.id}-${item.sku?.sizeMl}`}
-                className="text-xs text-gray-400 uppercase tracking-wider block mb-2"
-              >
-                Productos: - {item.sku.product.name} {item.sku.sizeMl}ml
-              </h3>
+              <div key={item.id}>
+                <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
+                  Productos: - {item.sku.product.name} {item.sku.sizeMl}ml
+                </h3>
+                <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
+                  Cantidad: {item?.quantity}
+                </h3>
+              </div>
             ))}
-            <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
-              Cantidad: {order?.quantity}
-            </h3>
             <h3 className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
               Monto: {order?.totalAmount}
             </h3>
