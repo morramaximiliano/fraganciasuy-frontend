@@ -252,20 +252,24 @@ const AdminDashboard = () => {
       </AnimatePresence>
 
       <AnimatePresence>
-        <AdminModalForm
-          activeTab={activeTab}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onSubmit={onSubmit}
-          editData={editingElement}
-          selectData={{ products, categories, brands }}
-        />
-        <AdminOrdersModal
-          activeTab={activeTab}
-          isOpen={isModalOpen}
-          order={selectedOrder}
-          onClose={handleCloseModal}
-        />
+        {activeTab !== "orders" && (
+          <AdminModalForm
+            activeTab={activeTab}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onSubmit={onSubmit}
+            editData={editingElement}
+            selectData={{ products, categories, brands }}
+          />
+        )}
+        {activeTab === "orders" && (
+          <AdminOrdersModal
+            activeTab={activeTab}
+            isOpen={isModalOpen}
+            order={selectedOrder}
+            onClose={handleCloseModal}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
