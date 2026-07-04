@@ -141,10 +141,10 @@ const AdminDashboard = () => {
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
           <div>
             <h1 className="font-display text-3xl text-white tracking-wide">
-              Dashboard de Control
+              Panel de control (Exclusivo para administradores)
             </h1>
             <p className="text-sm text-gray-500 font-light mt-1">
-              Arquitectura modular limpia.
+              Gestiona tu negocio desde aqui.
             </p>
           </div>
           {activeTab !== "orders" && (
@@ -153,7 +153,7 @@ const AdminDashboard = () => {
               onClick={() => setIsModalOpen(true)}
               className="flex items-center justify-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm rounded-xl transition-colors shadow-lg shadow-purple-950/20"
             >
-              <PlusLg /> Agregar {activeTab.toUpperCase()}
+              <PlusLg /> Agregar a {activeTab.toUpperCase()}
             </motion.button>
           )}
         </header>
