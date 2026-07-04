@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { X } from "react-bootstrap-icons";
 
 const AdminOrdersModal = ({
   activeTab,
