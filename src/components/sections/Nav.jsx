@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { CartPlus, List, X } from "react-bootstrap-icons";
 import { NavLink } from "react-router-dom";
-import { useCart } from "../context/CartState";
-import axios from "../api/axios";
+import { useCart } from "../../context/CartState";
+import axios from "../../api/axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserProfileBadge } from "./UserProfileBadge";
-import { useAuth } from "../context/AuthContext";
+import { UserProfileBadge } from "../UserProfileBadge";
+import { useAuth } from "../../context/AuthContext";
 
 const Nav = () => {
   const [categories, setCategories] = useState([]);

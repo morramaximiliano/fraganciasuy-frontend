@@ -1,5 +1,5 @@
 import React from "react";
-import ProductsContainer from "./ProductsContainer";
+import ProductsContainer from "../ProductsContainer";
 import Nav from "./Nav";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
