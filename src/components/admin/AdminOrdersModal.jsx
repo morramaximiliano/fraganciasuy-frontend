@@ -1,7 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const AdminOrdersModal = ({ activeTab, isOpen, handleCloseModal, order }) => {
+const AdminOrdersModal = ({
+  activeTab,
+  isOpen,
+  handleCloseModal,
+  order,
+  onClose,
+}) => {
   if (!isOpen) return null;
   console.log(order);
   return (
