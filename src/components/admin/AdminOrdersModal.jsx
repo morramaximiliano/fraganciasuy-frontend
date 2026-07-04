@@ -10,6 +10,7 @@ const AdminOrdersModal = ({
   onClose,
 }) => {
   if (!isOpen) return null;
+  console.log(order);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 backdrop-blur-sm">
       <motion.div
