@@ -13,7 +13,7 @@ import ProductsContainer from "./components/ProductsContainer";
 import AdminDashboard from "./components/admin/dashboard/AdminDashboard";
 import LoginForm from "./components/admin/auth/LoginForm";
 import RegisterForm from "./components/admin/auth/RegisterForm";
-import Footer from "./components/Footer";
+import Footer from "./components/sections/Footer";
 import { AuthProvider } from "./context/AuthContext";
 import { useEffect } from "react";
 import SuccessPage from "./components/SuccessPage";
