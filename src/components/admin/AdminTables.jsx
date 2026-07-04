@@ -1,12 +1,18 @@
 import React from "react";
-import { PencilSquare, Trash } from "react-bootstrap-icons";
+import { ChevronUp, PencilSquare, Trash } from "react-bootstrap-icons";
 
 const AdminTables = ({
   activeTab,
   onEdit,
   onDelete,
+  onViewMore,
+  setSelectedOrder,
   data: { products, skus, categories, brands, orders },
 }) => {
+  const selectOrder = (orders, id) => {
+    const order = orders.findIndex((o) => o.id === id);
+    return order;
+  };
   if (activeTab === "products") {
     return (
       <table className="w-full text-left text-sm">
@@ -189,10 +195,13 @@ const AdminTables = ({
               </td>
               <td className="p-4 pr-6 text-right flex gap-2 justify-end">
                 <button
-                  onClick={() => onEdit(order)}
+                  onClick={() => {
+                    setSelectedOrder(selectOrder(orders, order.id));
+                    onViewMore(order);
+                  }}
                   className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
                 >
-                  <PencilSquare />
+                  <ChevronUp />
                 </button>
                 <button
                   onClick={() => onDelete(order.id)}

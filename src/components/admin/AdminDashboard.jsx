@@ -7,6 +7,7 @@ import AdminTables from "./AdminTables";
 import AdminModalForm from "./AdminModalForm";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import AdminOrdersModal from "./AdminOrdersModal.jsx";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("products");
@@ -18,6 +19,7 @@ const AdminDashboard = () => {
   const [brands, setBrands] = useState([]);
   const [orders, setOrders] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const menuItems = [
     { id: "products", label: "Productos Base" },
@@ -26,6 +28,10 @@ const AdminDashboard = () => {
     { id: "brands", label: "Marcas" },
     { id: "orders", label: "Ordenes" },
   ];
+
+  const handleViewMoreClick = (order) => {
+    setIsModalOpen(true);
+  };
 
   const handleEditClick = (element) => {
     setEditingElement(element);
@@ -64,6 +70,7 @@ const AdminDashboard = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingElement(null);
+    setSelectedOrder(null);
   };
 
   const fetchData = async () => {
@@ -80,7 +87,6 @@ const AdminDashboard = () => {
       setCategories(resCat.data.categories);
       setBrands(resBrand.data.brands);
       setOrders(resOrders.data.orders);
-      console.log(resOrders);
     } catch (error) {
       console.error("Error cargando datos:", error);
     }
@@ -163,6 +169,8 @@ const AdminDashboard = () => {
               onEdit={handleEditClick}
               data={{ products, skus, categories, brands, orders }}
               onDelete={handleDeleteClick}
+              onViewMore={handleViewMoreClick}
+              setSelectedOrder={setSelectedOrder}
             />
           </div>
         </section>
@@ -251,6 +259,12 @@ const AdminDashboard = () => {
           onSubmit={onSubmit}
           editData={editingElement}
           selectData={{ products, categories, brands }}
+        />
+        <AdminOrdersModal
+          activeTab={activeTab}
+          isOpen={isModalOpen}
+          order={selectedOrder}
+          onClose={handleCloseModal}
         />
       </AnimatePresence>
     </div>
