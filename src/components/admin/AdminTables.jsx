@@ -10,8 +10,8 @@ const AdminTables = ({
   data: { products, skus, categories, brands, orders },
 }) => {
   const selectOrder = (orders, id) => {
-    const order = orders.findIndex((o) => o.id === id);
-    return order;
+    const i = orders.findIndex((o) => o.id === id);
+    return orders[i];
   };
   if (activeTab === "products") {
     return (
