@@ -148,13 +148,15 @@ const AdminDashboard = () => {
               Arquitectura modular limpia.
             </p>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm rounded-xl transition-colors shadow-lg shadow-purple-950/20"
-          >
-            <PlusLg /> Agregar {activeTab.toUpperCase()}
-          </motion.button>
+          {activeTab !== "orders" && (
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center justify-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm rounded-xl transition-colors shadow-lg shadow-purple-950/20"
+            >
+              <PlusLg /> Agregar {activeTab.toUpperCase()}
+            </motion.button>
+          )}
         </header>
 
         <section className="bg-gray-900/20 border border-gray-900 rounded-2xl overflow-hidden">
