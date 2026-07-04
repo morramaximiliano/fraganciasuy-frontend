@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import axios from "../../api/axios.js";
+import axios from "../../../api/axios.js";
 import { PlusLg, List, X, ArrowRight } from "react-bootstrap-icons";
-import AdminSidebar from "./AdminSidebar";
-import AdminTables from "./AdminTables";
-import AdminModalForm from "./AdminModalForm";
+import AdminSidebar from "../AdminSidebar.jsx";
+import AdminTables from "../AdminTables.jsx";
+import AdminModalForm from "./AdminModalForm.jsx";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import AdminOrdersModal from "./AdminOrdersModal.jsx";
+import AdminOrdersModal from "../AdminOrdersModal.jsx";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("products");
