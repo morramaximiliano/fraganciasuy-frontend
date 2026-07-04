@@ -8,8 +8,8 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import authSchema from "./authSchema.js";
-import api from "../../api/axios.js";
-import { useAuth } from "../../context/AuthContext.jsx";
+import axios from "../../../api/axios.js";
+import { useAuth } from "../../../context/AuthContext";
 
 function LoginForm() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await api.post("/auth/login", {
+      const response = await axios.post("/auth/login", {
         email: data.email,
         password: data.password,
       });

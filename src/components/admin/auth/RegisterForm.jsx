@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useNavigate, Link } from "react-router-dom";
 import { registerSchema } from "./registerSchema.js";
-import api from "../../api/axios.js";
+import axios from "../../../api/axios.js";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function RegisterForm() {
   const onSubmit = async (data) => {
     try {
       const { firstName, lastName, email, password } = data;
-      await api.post("/auth/register", {
+      await axios.post("/auth/register", {
         firstName,
         lastName,
         email,
