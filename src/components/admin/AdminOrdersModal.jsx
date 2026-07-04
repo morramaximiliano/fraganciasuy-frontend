@@ -19,7 +19,7 @@ const AdminOrdersModal = ({
         exit={{ scale: 0.95, opacity: 0 }}
         className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
       />
-      <div className="p-6 border-b border-gray-800 flex justify-between items-center">
+      <div className="p-6 border-b border-gray-800 flex flex-col justify-between items-center">
         <h3 className="text-lg font-medium text-white">
           Detalles de la Orden #{order.id}, usuario con id #{order.userId}
         </h3>
