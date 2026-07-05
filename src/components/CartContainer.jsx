@@ -3,6 +3,7 @@ import { Button, Card } from "flowbite-react";
 import { useCart } from "../context/CartState";
 import { motion, AnimatePresence } from "framer-motion";
 import CheckoutSection from "./CheckoutSection";
+import { Spinner } from "flowbite-react";
 
 const CartContainer = () => {
   const { cart, addToCart, removeFromCart, removeItem, clearCart } = useCart();
@@ -29,6 +30,10 @@ const CartContainer = () => {
         </div>
       </div>
     );
+  }
+
+  {
+    isInitialLoading && <Spinner />;
   }
 
   return (

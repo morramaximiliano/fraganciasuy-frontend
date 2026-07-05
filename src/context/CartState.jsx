@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext.jsx"; // Tu hook de autenticación
 import axios from "../api/axios.js"; // Tu instancia customizada de Axios
-import { Spinner } from "flowbite-react";
 
 const CartContext = createContext();
 
@@ -18,10 +17,6 @@ const CartState = ({ children }) => {
 
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
-  {
-    isInitialLoading && <Spinner />;
-  }
 
   const syncCart = async () => {
     if (authLoading || !isAuthenticated || isInitialLoading) return;
@@ -185,6 +180,7 @@ const CartState = ({ children }) => {
         removeFromCart,
         removeItem,
         clearCart,
+        isInitialLoading,
       }}
     >
       {children}
