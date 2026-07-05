@@ -19,12 +19,12 @@ const CartState = ({ children }) => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [hasMerged, setHasMerged] = useState(false);
 
-  const syncCart = async () => {
+  const syncCart = async (cartToSync) => {
     if (authLoading || !isAuthenticated || isInitialLoading) return;
 
     try {
       await axios.post("/cart/sync", {
-        items: cart.map((product) => ({
+        items: cartToSync.map((product) => ({
           skuId: product.item.id,
           quantity: product.qty,
         })),
@@ -106,7 +106,7 @@ const CartState = ({ children }) => {
   useEffect(() => {
     if (isInitialLoading || !isAuthenticated || !hasMerged) return;
     const delayDebounceFn = setTimeout(() => {
-      syncCart();
+      syncCart(cart);
     }, 1500);
     return () => clearTimeout(delayDebounceFn);
   }, [cart, isAuthenticated, authLoading, isInitialLoading, hasMerged]);
