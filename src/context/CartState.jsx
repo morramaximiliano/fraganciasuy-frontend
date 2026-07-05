@@ -74,6 +74,8 @@ const CartState = ({ children }) => {
             mergedCart.push(dbItem);
           }
         });
+        console.log("Estado antes de actualizar:", cart);
+        console.log("Datos que vienen del servidor:", response.data.cart);
         setCart(mergedCart);
       }
     } catch (error) {
