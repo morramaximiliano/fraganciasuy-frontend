@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useAuth } from "./AuthContext.jsx";
 import axios from "../api/axios.js";
 
@@ -190,7 +197,7 @@ const CartState = ({ children }) => {
     setCart((prev) => prev.filter((p) => p.item.id !== id));
   };
 
-  const clearCart = async () => {
+  const clearCart = useCallback(async () => {
     skipNextSyncRef.current = true;
     setCart([]);
     try {
@@ -200,7 +207,7 @@ const CartState = ({ children }) => {
     }
 
     if (isAuthenticated) await axios.post("/cart/clear").catch(() => {});
-  };
+  }, [isAuthenticated]);
 
   return (
     <CartContext.Provider

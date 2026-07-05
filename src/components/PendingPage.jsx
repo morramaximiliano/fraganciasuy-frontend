@@ -1,8 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "flowbite-react";
 
 const PendingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
       <div className="text-yellow-500 text-6xl mb-4">⏳</div>
@@ -17,7 +19,11 @@ const PendingPage = () => {
         <p className="text-sm text-gray-500">
           ¿Ya pagaste? El estado se actualizará en breve.
         </p>
-        <Button as={Link} to="/" color="light">
+        <Button
+          type="button"
+          color="light"
+          onClick={() => navigate("/", { replace: true })}
+        >
           Volver al inicio
         </Button>
       </div>

@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const UserProfileBadge = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
   if (!isAuthenticated || !user) return null;
 
   const initial = user.firstName ? user.firstName.charAt(0).toUpperCase() : "U";

@@ -1,8 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "flowbite-react";
 
 const FailurePage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
       <div className="text-red-500 text-6xl mb-4">✕</div>
@@ -13,7 +15,11 @@ const FailurePage = () => {
         Hubo un problema con la transacción. Por favor, intentá nuevamente o
         elegí otro método de pago.
       </p>
-      <Button as={Link} to="/cart" color="failure">
+      <Button
+        type="button"
+        color="failure"
+        onClick={() => navigate("/cart", { replace: true })}
+      >
         Intentar de nuevo
       </Button>
     </div>

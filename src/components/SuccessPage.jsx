@@ -1,13 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "flowbite-react";
 import { useCart } from "../context/CartState";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const SuccessPage = () => {
   const { clearCart } = useCart();
+  const navigate = useNavigate();
+  const hasClearedRef = useRef(false);
+
   useEffect(() => {
-    // Esto se ejecuta solo una vez cuando el componente se monta
+    if (hasClearedRef.current) return;
+    hasClearedRef.current = true;
     clearCart();
   }, [clearCart]);
   return (
@@ -18,7 +22,7 @@ const SuccessPage = () => {
         Tu pedido ha sido procesado correctamente. En breve recibirás los
         detalles en tu correo.
       </p>
-      <Button as={Link} to="/">
+      <Button type="button" onClick={() => navigate("/", { replace: true })}>
         Volver al inicio
       </Button>
     </div>
