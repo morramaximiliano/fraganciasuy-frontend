@@ -82,7 +82,6 @@ const CartState = ({ children }) => {
       totalCount = mergedCart.reduce((acc, curr) => acc + curr.qty, 0);
       setCart(mergedCart);
       setItemCount(totalCount);
-      syncCart();
     } catch (error) {
       console.error(
         "🚨 Error al recuperar/fusionar el carrito con la BD:",
