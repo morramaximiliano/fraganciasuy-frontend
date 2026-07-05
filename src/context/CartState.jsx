@@ -111,7 +111,7 @@ const CartState = ({ children }) => {
     if (isInitialLoading || !isAuthenticated || !hasMerged) return;
     const delayDebounceFn = setTimeout(() => {
       syncCart(cart);
-    }, 3000);
+    }, 800);
     return () => clearTimeout(delayDebounceFn);
   }, [cart, isAuthenticated, authLoading, isInitialLoading, hasMerged]);
 
