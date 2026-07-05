@@ -82,6 +82,7 @@ const AdminModalForm = ({
             <ProductsForm
               register={register}
               errors={errors}
+              products={products}
               categories={categories}
               brands={brands}
             />
