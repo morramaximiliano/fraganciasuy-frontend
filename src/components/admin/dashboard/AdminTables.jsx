@@ -15,8 +15,9 @@ const AdminTables = ({
   data: { products, skus, categories, brands, orders },
 }) => {
   if (activeTab === "products") {
-    return;
-    <ProductTab onDelete={onDelete} onEdit={onEdit} products={products} />;
+    return (
+      <ProductTab onDelete={onDelete} onEdit={onEdit} products={products} />
+    );
   }
 
   if (activeTab === "skus") {
