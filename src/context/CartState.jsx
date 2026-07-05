@@ -27,7 +27,7 @@ const CartState = ({ children }) => {
         skuId: product.item.id,
         quantity: product.qty,
       }));
-
+      console.log(itemsPayload);
       await axios.post("/cart/sync", itemsPayload);
     } catch (error) {
       console.error("🚨 Error al sincronizar el carrito con la BD:", error);
