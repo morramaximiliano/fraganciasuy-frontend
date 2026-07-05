@@ -1,6 +1,6 @@
 import React from "react";
 
-const BrandsForm = () => {
+const BrandsForm = ({ register, errors }) => {
   return (
     <div className="flex flex-col gap-4">
       <label className="text-xs text-gray-400 uppercase tracking-wider block mb-2">
