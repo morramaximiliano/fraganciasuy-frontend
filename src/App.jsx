@@ -36,9 +36,9 @@ const AdminRoute = ({ children }) => {
 function App() {
   const location = useLocation();
   return (
-    <AuthProvider>
-      <CartState>
-        <Router>
+    <Router>
+      <AuthProvider>
+        <CartState>
           <ScrollToTop />
           <Nav />
           <Routes location={location} key={location.pathname}>
@@ -69,16 +69,16 @@ function App() {
             <Route path="/failure" element={<FailurePage />} />
           </Routes>
           <Footer />
-        </Router>
-        <ToastContainer
-          pauseOnHover={false}
-          pauseOnFocusLoss={false}
-          theme="dark"
-          position="bottom-right"
-          autoClose={2000}
-        />
-      </CartState>
-    </AuthProvider>
+          <ToastContainer
+            pauseOnHover={false}
+            pauseOnFocusLoss={false}
+            theme="dark"
+            position="bottom-right"
+            autoClose={2000}
+          />
+        </CartState>
+      </AuthProvider>
+    </Router>
   );
 }
 
