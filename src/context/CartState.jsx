@@ -23,12 +23,16 @@ const CartState = ({ children }) => {
     if (authLoading || !isAuthenticated || isInitialLoading) return;
 
     try {
-      await axios.post("/cart/sync", {
-        items: cartToSync.map((product) => ({
-          skuId: product.item.id,
-          quantity: product.qty,
-        })),
+      const itemsPayload = cartToSync.map((product) => ({
+        skuId: product.item.id,
+        quantity: product.qty,
+      }));
+
+      console.log("Payload exacto que estoy enviando:", {
+        items: itemsPayload,
       });
+
+      await axios.post("/cart/sync", { items: itemsPayload });
     } catch (error) {
       console.error("🚨 Error al sincronizar el carrito con la BD:", error);
     }
