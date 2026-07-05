@@ -17,6 +17,21 @@ const CartState = ({ children }) => {
 
   const { isAuthenticated, loading: authLoading } = useAuth();
 
+  const syncCart = async () => {
+    if (authLoading || !isAuthenticated || cart.length === 0) return;
+
+    try {
+      await axios.post("/cart/sync", {
+        items: cart.map((product) => ({
+          skuId: product.item.id,
+          quantity: product.qty,
+        })),
+      });
+    } catch (error) {
+      console.error("🚨 Error al sincronizar el carrito con la BD:", error);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem("fraganciasuy_cart", JSON.stringify(cart));
     localStorage.setItem("fraganciasuy_cart_count", JSON.stringify(itemCount));
@@ -77,25 +92,9 @@ const CartState = ({ children }) => {
   }, [isAuthenticated, authLoading]);
 
   useEffect(() => {
-    const syncCart = async () => {
-      if (authLoading || !isAuthenticated || cart.length === 0) return;
-
-      try {
-        await axios.post("/cart/sync", {
-          items: cart.map((product) => ({
-            skuId: product.item.id,
-            quantity: product.qty,
-          })),
-        });
-      } catch (error) {
-        console.error("🚨 Error al sincronizar el carrito con la BD:", error);
-      }
-    };
-
     const delayDebounceFn = setTimeout(() => {
       syncCart();
     }, 800);
-
     return () => clearTimeout(delayDebounceFn);
   }, [cart, isAuthenticated, authLoading]);
 
@@ -164,6 +163,7 @@ const CartState = ({ children }) => {
     localStorage.removeItem("fraganciasuy_cart_count");
     localStorage.removeItem("cart");
     setItemCount(0);
+    syncCart();
   };
 
   return (
