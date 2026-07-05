@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext.jsx"; // Tu hook de autenticación
 import axios from "../api/axios.js"; // Tu instancia customizada de Axios
+import { Spinner } from "flowbite-react";
 
 const CartContext = createContext();
 
@@ -16,9 +17,14 @@ const CartState = ({ children }) => {
   });
 
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  {
+    isInitialLoading && <Spinner />;
+  }
 
   const syncCart = async () => {
-    if (authLoading || !isAuthenticated || cart.length === 0) return;
+    if (authLoading || !isAuthenticated || isInitialLoading) return;
 
     try {
       await axios.post("/cart/sync", {
@@ -32,71 +38,77 @@ const CartState = ({ children }) => {
     }
   };
 
+  const fetchCartFromDb = async () => {
+    if (authLoading || !isAuthenticated) {
+      setIsInitialLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get("/cart");
+      let mergedCart = [];
+      let totalCount = 0;
+      if (response.data?.success && response.data.cart) {
+        const dbCart = response.data.cart.map((dbItem) => {
+          return {
+            item: {
+              id: dbItem.skuId,
+              name: dbItem.sku?.product.name,
+              brand: dbItem.sku?.product.brand.name,
+              stock: dbItem.sku?.stock,
+              price: dbItem.sku?.price,
+              sizeMl: dbItem.sku?.sizeMl,
+              imageUrl: dbItem.sku?.product.imageUrl,
+            },
+            qty: dbItem.quantity,
+          };
+        });
+        mergedCart = [...cart];
+        dbCart.forEach((dbItem) => {
+          const index = mergedCart.findIndex(
+            (local) => local.item.id === dbItem.item.id,
+          );
+          if (index !== -1) {
+            const totalQty = mergedCart[index].qty + dbItem.qty;
+            mergedCart[index].qty = Math.min(
+              totalQty,
+              mergedCart[index].item.stock,
+            );
+          } else {
+            mergedCart.push(dbItem);
+          }
+        });
+      }
+      totalCount = mergedCart.reduce((acc, curr) => acc + curr.qty, 0);
+      setCart(mergedCart);
+      setItemCount(totalCount);
+      syncCart();
+    } catch (error) {
+      console.error(
+        "🚨 Error al recuperar/fusionar el carrito con la BD:",
+        error,
+      );
+    } finally {
+      setIsInitialLoading(false);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem("fraganciasuy_cart", JSON.stringify(cart));
     localStorage.setItem("fraganciasuy_cart_count", JSON.stringify(itemCount));
   }, [cart, itemCount]);
+
   useEffect(() => {
-    const fetchCartFromDb = async () => {
-      if (authLoading || !isAuthenticated) {
-        return;
-      }
-
-      try {
-        const response = await axios.get("/cart");
-
-        if (response.data && response.data.success) {
-          if (cart.length > 0) {
-            await axios.post("/cart/sync", {
-              items: cart.map((product) => ({
-                skuId: product.item.id,
-                name: product.item.name,
-                brand: product.item.brand,
-                stock: product.item.stock,
-                price: product.item.price,
-                sizeMl: product.item.sizeMl,
-                imageUrl: product.item.imageUrl,
-                quantity: product.qty,
-              })),
-            });
-          } else {
-            let totalCount = 0;
-            const dbCart = response.data.cart.map((dbItem) => {
-              totalCount += dbItem.quantity;
-              return {
-                item: {
-                  id: dbItem.skuId,
-                  name: dbItem.sku?.product.name,
-                  brand: dbItem.sku?.product.brand.name,
-                  stock: dbItem.sku?.stock,
-                  price: dbItem.sku?.price,
-                  sizeMl: dbItem.sku?.sizeMl,
-                  imageUrl: dbItem.sku?.product.imageUrl,
-                },
-                qty: dbItem.quantity,
-              };
-            });
-            setCart(dbCart);
-            setItemCount(totalCount);
-          }
-        }
-      } catch (error) {
-        console.error(
-          "🚨 Error al recuperar/fusionar el carrito con la BD:",
-          error,
-        );
-      }
-    };
-
     fetchCartFromDb();
   }, [isAuthenticated, authLoading]);
 
   useEffect(() => {
+    if (isInitialLoading || !isAuthenticated) return;
     const delayDebounceFn = setTimeout(() => {
       syncCart();
     }, 800);
     return () => clearTimeout(delayDebounceFn);
-  }, [cart, isAuthenticated, authLoading]);
+  }, [cart, isAuthenticated, authLoading, isInitialLoading]);
 
   const addToCart = (name, id, brand, stock, price, sizeMl, imageUrl) => {
     const item = {
@@ -163,7 +175,6 @@ const CartState = ({ children }) => {
     localStorage.removeItem("fraganciasuy_cart_count");
     localStorage.removeItem("cart");
     setItemCount(0);
-    syncCart();
   };
 
   return (
