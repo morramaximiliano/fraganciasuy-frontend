@@ -28,13 +28,15 @@ const CheckoutSection = () => {
       setErrorInput("Falta la dirección");
       return;
     }
-
+    setErrorInput("");
     setLoading(true);
+    let createdOrderId = null;
     try {
       const { data } = await api.post("/orders", {
         shippingAddress: address,
         paymentMethod: "Mercado Pago",
       });
+      createdOrderId = data.newOrder.id;
       const { data: mpData } = await api.post("/payments/create-preference", {
         orderId: data.newOrder.id,
         totalAmount: Number(data.newOrder.totalAmount),
@@ -42,6 +44,14 @@ const CheckoutSection = () => {
       setPreferenceId(mpData.preferenceId);
     } catch (err) {
       console.error("ERROR DETALLADO:", err.response?.data || err.message);
+      if (createdOrderId) {
+        try {
+          await api.delete(`/orders/${createdOrderId}`);
+          console.log("orden fallida eliminada correctamente");
+        } catch (deleteErr) {
+          console.error(deleteErr);
+        }
+      }
       setErrorInput("Error: " + (err.response?.data?.message || err.message));
       navigate("/failure");
     } finally {
