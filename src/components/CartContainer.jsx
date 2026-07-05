@@ -6,7 +6,14 @@ import CheckoutSection from "./CheckoutSection";
 import { Spinner } from "flowbite-react";
 
 const CartContainer = () => {
-  const { cart, addToCart, removeFromCart, removeItem, clearCart } = useCart();
+  const {
+    cart,
+    addToCart,
+    removeFromCart,
+    removeItem,
+    clearCart,
+    isInitialLoading,
+  } = useCart();
   const total = cart.reduce((acc, product) => {
     return acc + (product.item.price || 0) * product.qty;
   }, 0);
