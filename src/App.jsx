@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/sections/Home";
 import Nav from "./components/sections/Nav";
 import CartState from "./context/CartState";
@@ -36,49 +31,47 @@ const AdminRoute = ({ children }) => {
 function App() {
   const location = useLocation();
   return (
-    <Router>
-      <AuthProvider>
-        <CartState>
-          <ScrollToTop />
-          <Nav />
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<ProductsContainer />} />
-            <Route path="/products/:id" element={<ProductsContainer />} />
-            <Route path="/cart" element={<CartContainer />} />
-            <Route
-              path="/register"
-              element={
-                <div className="flex items-center justify-center min-h-screen bg-gray-950 px-4">
-                  <RegisterForm />
-                </div>
-              }
-            />{" "}
-            <Route path="/login" element={<LoginForm />} />
-            <Route
-              path="/dashboard"
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              }
-            />
-            <Route path="*" element={<NotFoundPage />} />
-            <Route path="/success" element={<SuccessPage />} />
-            <Route path="/pending" element={<PendingPage />} />
-            <Route path="/failure" element={<FailurePage />} />
-          </Routes>
-          <Footer />
-          <ToastContainer
-            pauseOnHover={false}
-            pauseOnFocusLoss={false}
-            theme="dark"
-            position="bottom-right"
-            autoClose={2000}
+    <AuthProvider>
+      <CartState>
+        <ScrollToTop />
+        <Nav />
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<ProductsContainer />} />
+          <Route path="/products/:id" element={<ProductsContainer />} />
+          <Route path="/cart" element={<CartContainer />} />
+          <Route
+            path="/register"
+            element={
+              <div className="flex items-center justify-center min-h-screen bg-gray-950 px-4">
+                <RegisterForm />
+              </div>
+            }
+          />{" "}
+          <Route path="/login" element={<LoginForm />} />
+          <Route
+            path="/dashboard"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
           />
-        </CartState>
-      </AuthProvider>
-    </Router>
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/pending" element={<PendingPage />} />
+          <Route path="/failure" element={<FailurePage />} />
+        </Routes>
+        <Footer />
+        <ToastContainer
+          pauseOnHover={false}
+          pauseOnFocusLoss={false}
+          theme="dark"
+          position="bottom-right"
+          autoClose={2000}
+        />
+      </CartState>
+    </AuthProvider>
   );
 }
 
