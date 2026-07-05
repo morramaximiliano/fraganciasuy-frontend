@@ -165,12 +165,19 @@ const CartState = ({ children }) => {
     }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCart([]);
+    setItemCount(0);
     localStorage.removeItem("fraganciasuy_cart");
     localStorage.removeItem("fraganciasuy_cart_count");
     localStorage.removeItem("cart");
-    setItemCount(0);
+    if (isAuthenticated) {
+      try {
+        await axios.post("/cart/clear");
+      } catch (error) {
+        console.error("error al vaciar carrito en la BD:", error);
+      }
+    }
   };
 
   return (
