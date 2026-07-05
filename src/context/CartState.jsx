@@ -112,10 +112,7 @@ const CartState = ({ children }) => {
             return dbCart;
           }
 
-          if (dbCart.length > 0) {
-            return dbCart;
-          }
-
+          // Siempre fusiona el carrito local con el del servidor
           return mergeCartItems(currentCart, dbCart);
         });
       }
