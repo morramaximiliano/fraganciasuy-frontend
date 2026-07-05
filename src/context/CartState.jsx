@@ -94,7 +94,7 @@ const CartState = ({ children }) => {
 
   useEffect(() => {
     fetchCartFromDb();
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated, authLoading, isInitialLoading]);
 
   useEffect(() => {
     if (isInitialLoading || !isAuthenticated) return;
