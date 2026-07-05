@@ -3,6 +3,7 @@ import { Trash } from "react-bootstrap-icons";
 import { PencilSquare } from "react-bootstrap-icons";
 
 const ProductTab = ({ products, onEdit, onDelete }) => {
+  console.log(products);
   return (
     <table className="w-full text-left text-sm">
       <thead>

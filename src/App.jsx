@@ -21,6 +21,9 @@ import PendingPage from "./components/PendingPage";
 import FailurePage from "./components/FailurePage";
 import NotFoundPage from "./components/NotFoundPage";
 import ScrollToTop from "./components/ScrollToTop";
+import { useLocation } from "react-router-dom";
+
+const location = useLocation();
 
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -39,7 +42,7 @@ function App() {
         <Router>
           <ScrollToTop />
           <Nav />
-          <Routes>
+          <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<ProductsContainer />} />
             <Route path="/products/:id" element={<ProductsContainer />} />
