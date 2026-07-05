@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./AuthContext.jsx"; // Tu hook de autenticación
-import axios from "../api/axios.js"; // Tu instancia customizada de Axios
+import { useAuth } from "./AuthContext.jsx";
+import axios from "../api/axios.js";
 
 const CartContext = createContext();
 
@@ -10,31 +10,30 @@ const CartState = ({ children }) => {
     return localData ? JSON.parse(localData) : [];
   });
 
-  const [itemCount, setItemCount] = useState(() => {
-    const localCount = localStorage.getItem("fraganciasuy_cart_count");
-    return localCount ? JSON.parse(localCount) : 0;
-  });
-
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [hasMerged, setHasMerged] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
+  // El total se calcula en tiempo real, eliminando el error de desincronización
+  const itemCount = cart.reduce((acc, curr) => acc + curr.qty, 0);
+
   const syncCart = async (cartToSync) => {
-    if (authLoading || !isAuthenticated || isInitialLoading || isSyncing)
-      return;
+    if (authLoading || !isAuthenticated || isSyncing) return;
+
     setIsSyncing(true);
     try {
       const itemsPayload = cartToSync.map((product) => ({
         skuId: product.item.id,
         quantity: product.qty,
       }));
-      console.log(itemsPayload);
+
+      // Enviamos el array plano al backend
       await axios.post("/cart/sync", itemsPayload);
     } catch (error) {
-      console.error("🚨 Error al sincronizar el carrito con la BD:", error);
+      console.error("🚨 Error al sincronizar con BD:", error);
     } finally {
-      setIsSyncing(true);
+      setIsSyncing(false); // CORREGIDO: ahora se libera el bloqueo
     }
   };
 
@@ -46,154 +45,98 @@ const CartState = ({ children }) => {
 
     try {
       const response = await axios.get("/cart");
-      let mergedCart = [];
-      let totalCount = 0;
-      if (!response.data?.success || !response.data.cart) {
-        setHasMerged(true);
-        setIsInitialLoading(false);
-        return;
-      }
       if (response.data?.success && response.data.cart) {
-        const dbCart = response.data.cart.map((dbItem) => {
-          return {
-            item: {
-              id: dbItem.skuId,
-              name: dbItem.sku?.product.name,
-              brand: dbItem.sku?.product.brand.name,
-              stock: dbItem.sku?.stock,
-              price: dbItem.sku?.price,
-              sizeMl: dbItem.sku?.sizeMl,
-              imageUrl: dbItem.sku?.product.imageUrl,
-            },
-            qty: dbItem.quantity,
-          };
-        });
-        mergedCart = [...cart];
+        const dbCart = response.data.cart.map((dbItem) => ({
+          item: {
+            id: dbItem.skuId,
+            name: dbItem.sku?.product.name,
+            brand: dbItem.sku?.product.brand.name,
+            stock: dbItem.sku?.stock,
+            price: dbItem.sku?.price,
+            sizeMl: dbItem.sku?.sizeMl,
+            imageUrl: dbItem.sku?.product.imageUrl,
+          },
+          qty: dbItem.quantity,
+        }));
+
+        // Fusionamos local con DB
+        const mergedCart = [...cart];
         dbCart.forEach((dbItem) => {
           const index = mergedCart.findIndex(
             (local) => local.item.id === dbItem.item.id,
           );
           if (index !== -1) {
-            const totalQty = mergedCart[index].qty + dbItem.qty;
             mergedCart[index].qty = Math.min(
-              totalQty,
+              mergedCart[index].qty + dbItem.qty,
               mergedCart[index].item.stock,
             );
           } else {
             mergedCart.push(dbItem);
           }
         });
+        setCart(mergedCart);
       }
-      totalCount = mergedCart.reduce((acc, curr) => acc + curr.qty, 0);
-      setCart(mergedCart);
-      setItemCount(totalCount);
-      setHasMerged(true);
     } catch (error) {
-      console.error(
-        "🚨 Error al recuperar/fusionar el carrito con la BD:",
-        error,
-      );
+      console.error("🚨 Error al recuperar carrito:", error);
     } finally {
+      setHasMerged(true);
       setIsInitialLoading(false);
     }
   };
 
   useEffect(() => {
     localStorage.setItem("fraganciasuy_cart", JSON.stringify(cart));
-    localStorage.setItem("fraganciasuy_cart_count", JSON.stringify(itemCount));
-  }, [cart, itemCount]);
+  }, [cart]);
 
   useEffect(() => {
     fetchCartFromDb();
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    if (isInitialLoading || !isAuthenticated || !hasMerged || isSyncing) return;
+    // Sincronizamos solo si ya terminamos la carga inicial y la fusión
+    if (isInitialLoading || !hasMerged || !isAuthenticated) return;
+
     const delayDebounceFn = setTimeout(() => {
       syncCart(cart);
     }, 500);
+
     return () => clearTimeout(delayDebounceFn);
-  }, [
-    cart,
-    isAuthenticated,
-    authLoading,
-    isInitialLoading,
-    hasMerged,
-    isSyncing,
-  ]);
+  }, [cart, isAuthenticated, hasMerged]);
 
   const addToCart = (name, id, brand, stock, price, sizeMl, imageUrl) => {
-    const item = {
-      id: id,
-      name: name,
-      brand: brand,
-      stock: stock,
-      price: price,
-      sizeMl: sizeMl,
-      imageUrl: imageUrl,
-    };
+    const item = { id, name, brand, stock, price, sizeMl, imageUrl };
+    const i = cart.findIndex((p) => p.item.id === id);
 
-    const i = cart.findIndex((product) => product.item.id === item.id);
-    let newCart = [];
-    if (i === -1 && item.stock > 0) {
-      newCart = [...cart, { item: item, qty: 1 }];
-      setItemCount(itemCount + 1);
-    } else {
-      newCart = [...cart];
-      if (newCart[i].qty < newCart[i].item.stock) {
-        newCart[i] = {
-          ...newCart[i],
-          qty: newCart[i].qty + 1,
-        };
-        setItemCount(itemCount + 1);
-      }
+    let newCart = [...cart];
+    if (i === -1 && stock > 0) {
+      newCart.push({ item, qty: 1 });
+    } else if (i !== -1 && newCart[i].qty < stock) {
+      newCart[i] = { ...newCart[i], qty: newCart[i].qty + 1 };
     }
     setCart(newCart);
   };
 
   const removeFromCart = (id) => {
-    const i = cart.findIndex((product) => product.item.id === id);
-    let newCart = [];
-    if (i !== -1) {
-      newCart = [...cart];
-      if (newCart[i].qty > 1) {
-        newCart[i] = {
-          ...newCart[i],
-          qty: newCart[i].qty - 1,
-        };
-        setItemCount(itemCount - 1);
-      } else if (newCart[i].qty === 1) {
-        newCart.splice(i, 1);
-        setItemCount(itemCount - 1);
-      }
+    const i = cart.findIndex((p) => p.item.id === id);
+    if (i === -1) return;
+
+    let newCart = [...cart];
+    if (newCart[i].qty > 1) {
+      newCart[i] = { ...newCart[i], qty: newCart[i].qty - 1 };
+    } else {
+      newCart.splice(i, 1);
     }
     setCart(newCart);
   };
 
   const removeItem = (id) => {
-    const i = cart.findIndex((product) => product.item.id === id);
-    let newCart = [];
-    if (i !== -1) {
-      newCart = [...cart];
-      setItemCount(itemCount - newCart[i].qty);
-      newCart.splice(i, 1);
-      setCart(newCart);
-    }
+    setCart(cart.filter((p) => p.item.id !== id));
   };
 
   const clearCart = async () => {
     setCart([]);
-    setItemCount(0);
     localStorage.removeItem("fraganciasuy_cart");
-    localStorage.removeItem("fraganciasuy_cart_count");
-    localStorage.removeItem("cart");
-    if (isAuthenticated) {
-      try {
-        await axios.post("/cart/clear");
-      } catch (error) {
-        console.error("error al vaciar carrito en la BD:", error);
-      }
-    }
+    if (isAuthenticated) await axios.post("/cart/clear").catch(() => {});
   };
 
   return (
@@ -215,4 +158,3 @@ const CartState = ({ children }) => {
 
 export const useCart = () => useContext(CartContext);
 export default CartState;
-export { CartContext };
