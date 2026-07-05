@@ -129,14 +129,6 @@ const AdminOrdersModal = ({
                 {order?.shippingAddress ?? "No informada"}
               </p>
             </div>
-            <div className="rounded-2xl border border-gray-800 bg-gray-950/60 p-4">
-              <span className="block text-[11px] uppercase tracking-[0.22em] text-gray-500">
-                Observación
-              </span>
-              <p className="mt-2 text-sm leading-6 text-gray-200">
-                Revisa el detalle antes de confirmar cualquier actualización.
-              </p>
-            </div>
           </div>
         </div>
       </motion.div>
