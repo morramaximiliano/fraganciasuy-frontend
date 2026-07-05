@@ -12,28 +12,42 @@ const CartState = ({ children }) => {
 
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [hasMerged, setHasMerged] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // El total se calcula en tiempo real, eliminando el error de desincronización
   const itemCount = cart.reduce((acc, curr) => acc + curr.qty, 0);
+
+  // Mapeo unificado para asegurar consistencia en todo el archivo
+  const mapDbToLocal = (dbItem) => ({
+    item: {
+      id: dbItem.skuId,
+      name: dbItem.sku?.product.name,
+      brand: dbItem.sku?.product.brand.name,
+      stock: dbItem.sku?.stock,
+      price: dbItem.sku?.price,
+      sizeMl: dbItem.sku?.sizeMl,
+      imageUrl: dbItem.sku?.product.imageUrl,
+    },
+    qty: dbItem.quantity,
+  });
 
   const syncCart = async (cartToSync) => {
     if (authLoading || !isAuthenticated || isSyncing) return;
 
     setIsSyncing(true);
     try {
-      const itemsPayload = cartToSync.map((product) => ({
-        skuId: product.item.id,
-        quantity: product.qty,
+      const itemsPayload = cartToSync.map((p) => ({
+        skuId: p.item.id,
+        quantity: p.qty,
       }));
+      const response = await axios.post("/cart/sync", itemsPayload);
 
-      // Enviamos el array plano al backend
-      await axios.post("/cart/sync", itemsPayload);
+      if (response.data.cartItems) {
+        setCart(response.data.cartItems.map(mapDbToLocal));
+      }
     } catch (error) {
-      console.error("🚨 Error al sincronizar con BD:", error);
+      console.error("🚨 Error de sync:", error);
     } finally {
-      setIsSyncing(false); // CORREGIDO: ahora se libera el bloqueo
+      setIsSyncing(false);
     }
   };
 
@@ -42,102 +56,66 @@ const CartState = ({ children }) => {
       setIsInitialLoading(false);
       return;
     }
-
     try {
       const response = await axios.get("/cart");
       if (response.data?.success && response.data.cart) {
-        const dbCart = response.data.cart.map((dbItem) => ({
-          item: {
-            id: dbItem.skuId,
-            name: dbItem.sku?.product.name,
-            brand: dbItem.sku?.product.brand.name,
-            stock: dbItem.sku?.stock,
-            price: dbItem.sku?.price,
-            sizeMl: dbItem.sku?.sizeMl,
-            imageUrl: dbItem.sku?.product.imageUrl,
-          },
-          qty: dbItem.quantity,
-        }));
-
-        // Fusionamos local con DB
-        const mergedCart = [...cart];
-        dbCart.forEach((dbItem) => {
-          const index = mergedCart.findIndex(
-            (local) => local.item.id === dbItem.item.id,
-          );
-          if (index !== -1) {
-            mergedCart[index].qty = Math.min(
-              mergedCart[index].qty + dbItem.qty,
-              mergedCart[index].item.stock,
-            );
-          } else {
-            mergedCart.push(dbItem);
-          }
-        });
-        console.log("Estado antes de actualizar:", cart);
-        console.log("Datos que vienen del servidor:", response.data.cart);
-        setCart(mergedCart);
+        // REEMPLAZAMOS totalmente el carrito local con el de la BD.
+        // No hacemos merge manual para evitar duplicados.
+        setCart(response.data.cart.map(mapDbToLocal));
       }
     } catch (error) {
-      console.error("🚨 Error al recuperar carrito:", error);
+      console.error("🚨 Error fetch:", error);
     } finally {
-      setHasMerged(true);
       setIsInitialLoading(false);
     }
   };
 
+  // Persistencia local
   useEffect(() => {
     localStorage.setItem("fraganciasuy_cart", JSON.stringify(cart));
   }, [cart]);
 
+  // Carga inicial al autenticar
   useEffect(() => {
-    fetchCartFromDb();
+    if (isAuthenticated) fetchCartFromDb();
+    else setIsInitialLoading(false);
   }, [isAuthenticated]);
 
+  // Sincronización automática
   useEffect(() => {
-    // Sincronizamos solo si ya terminamos la carga inicial y la fusión
-    if (isInitialLoading || !hasMerged || !isAuthenticated) return;
-
-    const delayDebounceFn = setTimeout(() => {
-      syncCart(cart);
-    }, 500);
-
+    if (isInitialLoading || !isAuthenticated) return;
+    const delayDebounceFn = setTimeout(() => syncCart(cart), 500);
     return () => clearTimeout(delayDebounceFn);
-  }, [cart, isAuthenticated, hasMerged]);
+  }, [cart, isAuthenticated]);
 
   const addToCart = (name, id, brand, stock, price, sizeMl, imageUrl) => {
     const item = { id, name, brand, stock, price, sizeMl, imageUrl };
-    const i = cart.findIndex((p) => p.item.id === id);
-
-    let newCart = [...cart];
-    if (i === -1 && stock > 0) {
-      newCart.push({ item, qty: 1 });
-    } else if (i !== -1 && newCart[i].qty < stock) {
-      newCart[i] = { ...newCart[i], qty: newCart[i].qty + 1 };
-    }
-    setCart(newCart);
+    setCart((prev) => {
+      const i = prev.findIndex((p) => p.item.id === id);
+      if (i === -1 && stock > 0) return [...prev, { item, qty: 1 }];
+      if (i !== -1 && prev[i].qty < stock) {
+        const next = [...prev];
+        next[i] = { ...next[i], qty: next[i].qty + 1 };
+        return next;
+      }
+      return prev;
+    });
   };
 
   const removeFromCart = (id) => {
-    const i = cart.findIndex((p) => p.item.id === id);
-    if (i === -1) return;
-
-    let newCart = [...cart];
-    if (newCart[i].qty > 1) {
-      newCart[i] = { ...newCart[i], qty: newCart[i].qty - 1 };
-    } else {
-      newCart.splice(i, 1);
-    }
-    setCart(newCart);
+    setCart((prev) =>
+      prev
+        .map((p) => (p.item.id === id ? { ...p, qty: p.qty - 1 } : p))
+        .filter((p) => p.qty > 0),
+    );
   };
 
   const removeItem = (id) => {
-    setCart(cart.filter((p) => p.item.id !== id));
+    setCart((prev) => prev.filter((p) => p.item.id !== id));
   };
 
   const clearCart = async () => {
     setCart([]);
-    localStorage.removeItem("fraganciasuy_cart");
     if (isAuthenticated) await axios.post("/cart/clear").catch(() => {});
   };
 
@@ -157,6 +135,3 @@ const CartState = ({ children }) => {
     </CartContext.Provider>
   );
 };
-
-export const useCart = () => useContext(CartContext);
-export default CartState;
