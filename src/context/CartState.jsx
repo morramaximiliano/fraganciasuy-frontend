@@ -15,7 +15,7 @@ const mapDbItemToCartItem = (dbItem) => ({
     sizeMl: dbItem.sku?.sizeMl,
     imageUrl: dbItem.sku?.product.imageUrl,
   },
-  qty: dbItem.quantity,
+  qty: Number(dbItem.quantity) || 0,
 });
 
 const mergeCartItems = (primaryCart, secondaryCart) => {
@@ -44,7 +44,10 @@ const mergeCartItems = (primaryCart, secondaryCart) => {
 const normalizeCart = (cartItems) =>
   [...cartItems]
     .filter((entry) => entry?.item?.id && entry.qty > 0)
-    .map((entry) => ({ id: entry.item.id, qty: entry.qty }))
+    .map((entry) => ({
+      id: String(entry.item.id),
+      qty: Number(entry.qty) || 0,
+    }))
     .sort((first, second) => String(first.id).localeCompare(String(second.id)));
 
 const sameCart = (firstCart, secondCart) =>
@@ -99,6 +102,10 @@ const CartState = ({ children }) => {
 
         setCart((currentCart) => {
           if (sameCart(currentCart, dbCart)) {
+            return dbCart;
+          }
+
+          if (dbCart.length > 0) {
             return dbCart;
           }
 
