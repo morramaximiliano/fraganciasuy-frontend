@@ -108,12 +108,19 @@ const CartState = ({ children }) => {
   }, [isAuthenticated, authLoading]);
 
   useEffect(() => {
-    if (isInitialLoading || !isAuthenticated || !hasMerged) return;
+    if (isInitialLoading || !isAuthenticated || !hasMerged || isSyncing) return;
     const delayDebounceFn = setTimeout(() => {
       syncCart(cart);
-    }, 800);
+    }, 500);
     return () => clearTimeout(delayDebounceFn);
-  }, [cart, isAuthenticated, authLoading, isInitialLoading, hasMerged]);
+  }, [
+    cart,
+    isAuthenticated,
+    authLoading,
+    isInitialLoading,
+    hasMerged,
+    isSyncing,
+  ]);
 
   const addToCart = (name, id, brand, stock, price, sizeMl, imageUrl) => {
     const item = {
