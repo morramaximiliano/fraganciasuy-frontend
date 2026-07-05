@@ -18,10 +18,12 @@ const CartState = ({ children }) => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [hasMerged, setHasMerged] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const syncCart = async (cartToSync) => {
-    if (authLoading || !isAuthenticated || isInitialLoading) return;
-
+    if (authLoading || !isAuthenticated || isInitialLoading || isSyncing)
+      return;
+    setIsSyncing(true);
     try {
       const itemsPayload = cartToSync.map((product) => ({
         skuId: product.item.id,
@@ -31,6 +33,8 @@ const CartState = ({ children }) => {
       await axios.post("/cart/sync", itemsPayload);
     } catch (error) {
       console.error("🚨 Error al sincronizar el carrito con la BD:", error);
+    } finally {
+      setIsSyncing(true);
     }
   };
 
