@@ -13,7 +13,7 @@ const CartState = ({ children }) => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
-
+  const [hasMerged, setHasMerged] = useState(false);
   const itemCount = cart.reduce((acc, curr) => acc + curr.qty, 0);
 
   // Mapeo unificado para asegurar consistencia en todo el archivo
@@ -31,6 +31,7 @@ const CartState = ({ children }) => {
   });
 
   const syncCart = async (cartToSync) => {
+    // Si estamos en medio de una sincronización, no hacemos nada
     if (authLoading || !isAuthenticated || isSyncing) return;
 
     setIsSyncing(true);
@@ -41,8 +42,25 @@ const CartState = ({ children }) => {
       }));
       const response = await axios.post("/cart/sync", itemsPayload);
 
-      if (response.data.cartItems) {
-        setCart(response.data.cartItems.map(mapDbToLocal));
+      if (response.data && Array.isArray(response.data.cartItems)) {
+        const updatedCart = response.data.cartItems.map((dbItem) => ({
+          item: {
+            id: dbItem.skuId,
+            name: dbItem.sku?.product.name,
+            brand: dbItem.sku?.product.brand.name,
+            stock: dbItem.sku?.stock,
+            price: dbItem.sku?.price,
+            sizeMl: dbItem.sku?.sizeMl,
+            imageUrl: dbItem.sku?.product.imageUrl,
+          },
+          qty: dbItem.quantity,
+        }));
+
+        // Verificamos si realmente hay cambios antes de hacer setCart
+        // Esto evita el bucle infinito de re-renderizados
+        if (JSON.stringify(updatedCart) !== JSON.stringify(cartToSync)) {
+          setCart(updatedCart);
+        }
       }
     } catch (error) {
       console.error("🚨 Error de sync:", error);
@@ -56,16 +74,32 @@ const CartState = ({ children }) => {
       setIsInitialLoading(false);
       return;
     }
+
     try {
       const response = await axios.get("/cart");
-      if (response.data?.success && response.data.cart) {
-        // REEMPLAZAMOS totalmente el carrito local con el de la BD.
-        // No hacemos merge manual para evitar duplicados.
-        setCart(response.data.cart.map(mapDbToLocal));
+
+      // Validamos que la respuesta sea un array antes de procesar
+      if (response.data?.success && Array.isArray(response.data.cart)) {
+        const dbCart = response.data.cart.map((dbItem) => ({
+          item: {
+            id: dbItem.skuId,
+            name: dbItem.sku?.product.name,
+            brand: dbItem.sku?.product.brand.name,
+            stock: dbItem.sku?.stock,
+            price: dbItem.sku?.price,
+            sizeMl: dbItem.sku?.sizeMl,
+            imageUrl: dbItem.sku?.product.imageUrl,
+          },
+          qty: dbItem.quantity,
+        }));
+
+        // Simplemente sobrescribimos el estado con lo que viene de la BD
+        setCart(dbCart);
       }
     } catch (error) {
-      console.error("🚨 Error fetch:", error);
+      console.error("🚨 Error al recuperar carrito:", error);
     } finally {
+      setHasMerged(true);
       setIsInitialLoading(false);
     }
   };
@@ -83,10 +117,10 @@ const CartState = ({ children }) => {
 
   // Sincronización automática
   useEffect(() => {
-    if (isInitialLoading || !isAuthenticated) return;
+    if (isInitialLoading || !isAuthenticated || !hasMerged) return;
     const delayDebounceFn = setTimeout(() => syncCart(cart), 500);
     return () => clearTimeout(delayDebounceFn);
-  }, [cart, isAuthenticated]);
+  }, [cart, isAuthenticated, isInitialLoading, hasMerged]);
 
   const addToCart = (name, id, brand, stock, price, sizeMl, imageUrl) => {
     const item = { id, name, brand, stock, price, sizeMl, imageUrl };
