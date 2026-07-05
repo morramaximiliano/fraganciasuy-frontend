@@ -41,8 +41,15 @@ const mergeCartItems = (primaryCart, secondaryCart) => {
   return Array.from(itemsById.values());
 };
 
+const normalizeCart = (cartItems) =>
+  [...cartItems]
+    .filter((entry) => entry?.item?.id && entry.qty > 0)
+    .map((entry) => ({ id: entry.item.id, qty: entry.qty }))
+    .sort((first, second) => String(first.id).localeCompare(String(second.id)));
+
 const sameCart = (firstCart, secondCart) =>
-  JSON.stringify(firstCart) === JSON.stringify(secondCart);
+  JSON.stringify(normalizeCart(firstCart)) ===
+  JSON.stringify(normalizeCart(secondCart));
 
 const CartState = ({ children }) => {
   const [cart, setCart] = useState(() => {
@@ -91,8 +98,11 @@ const CartState = ({ children }) => {
         const dbCart = response.data.cart.map(mapDbItemToCartItem);
 
         setCart((currentCart) => {
-          const mergedCart = mergeCartItems(currentCart, dbCart);
-          return sameCart(currentCart, mergedCart) ? currentCart : mergedCart;
+          if (sameCart(currentCart, dbCart)) {
+            return dbCart;
+          }
+
+          return mergeCartItems(currentCart, dbCart);
         });
       }
     } catch (error) {
