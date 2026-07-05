@@ -35,7 +35,7 @@ const CartState = ({ children }) => {
   };
 
   const fetchCartFromDb = async () => {
-    if (authLoading || !isAuthenticated || hasMerged) {
+    if (!isAuthenticated) {
       setIsInitialLoading(false);
       return;
     }
@@ -44,6 +44,11 @@ const CartState = ({ children }) => {
       const response = await axios.get("/cart");
       let mergedCart = [];
       let totalCount = 0;
+      if (!response.data?.success || !response.data.cart) {
+        setHasMerged(true);
+        setIsInitialLoading(false);
+        return;
+      }
       if (response.data?.success && response.data.cart) {
         const dbCart = response.data.cart.map((dbItem) => {
           return {
