@@ -23,8 +23,6 @@ import NotFoundPage from "./components/NotFoundPage";
 import ScrollToTop from "./components/ScrollToTop";
 import { useLocation } from "react-router-dom";
 
-const location = useLocation();
-
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -36,6 +34,7 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 function App() {
+  const location = useLocation();
   return (
     <AuthProvider>
       <CartState>
