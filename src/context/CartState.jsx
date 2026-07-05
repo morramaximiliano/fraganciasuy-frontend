@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useAuth } from "./AuthContext.jsx";
 import axios from "../api/axios.js";
 
@@ -16,19 +16,7 @@ const CartState = ({ children }) => {
   const [hasMerged, setHasMerged] = useState(false);
   const itemCount = cart.reduce((acc, curr) => acc + curr.qty, 0);
 
-  // Mapeo unificado para asegurar consistencia en todo el archivo
-  const mapDbToLocal = (dbItem) => ({
-    item: {
-      id: dbItem.skuId,
-      name: dbItem.sku?.product.name,
-      brand: dbItem.sku?.product.brand.name,
-      stock: dbItem.sku?.stock,
-      price: dbItem.sku?.price,
-      sizeMl: dbItem.sku?.sizeMl,
-      imageUrl: dbItem.sku?.product.imageUrl,
-    },
-    qty: dbItem.quantity,
-  });
+  const isInitialLoad = useRef(true);
 
   const syncCart = async (cartToSync) => {
     // Si estamos en medio de una sincronización, no hacemos nada
@@ -101,6 +89,9 @@ const CartState = ({ children }) => {
     } finally {
       setHasMerged(true);
       setIsInitialLoading(false);
+      setTimeout(() => {
+        isInitialLoad.current = false;
+      }, 1000);
     }
   };
 
@@ -117,7 +108,13 @@ const CartState = ({ children }) => {
 
   // Sincronización automática
   useEffect(() => {
-    if (isInitialLoading || !isAuthenticated || !hasMerged) return;
+    if (
+      isInitialLoading ||
+      !isAuthenticated ||
+      !hasMerged ||
+      isInitialLoad.current
+    )
+      return;
     const delayDebounceFn = setTimeout(() => syncCart(cart), 500);
     return () => clearTimeout(delayDebounceFn);
   }, [cart, isAuthenticated, isInitialLoading, hasMerged]);
