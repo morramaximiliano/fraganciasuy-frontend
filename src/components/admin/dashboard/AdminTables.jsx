@@ -1,5 +1,10 @@
 import React from "react";
 import { ChevronUp, PencilSquare, Trash } from "react-bootstrap-icons";
+import ProductTab from "./tabs/ProductTab";
+import SkuTab from "./tabs/SkuTab";
+import CategoryTab from "./tabs/CategoryTab";
+import BrandTab from "./tabs/BrandTab";
+import OrderTab from "./tabs/OrderTab";
 
 const AdminTables = ({
   activeTab,
@@ -9,213 +14,34 @@ const AdminTables = ({
   setSelectedOrder,
   data: { products, skus, categories, brands, orders },
 }) => {
-  const selectOrder = (orders, id) => {
-    const i = orders.findIndex((o) => o.id === id);
-    return orders[i];
-  };
   if (activeTab === "products") {
-    return (
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-gray-900 text-xs text-gray-500 uppercase font-light">
-            <th className="p-4 pl-6">Producto</th>
-            <th className="p-4">Descripción</th>
-            <th className="p-4 pr-6 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-900/50">
-          {products.map((p) => (
-            <tr key={p.id} className="text-gray-300 hover:bg-gray-900/10">
-              <td className="p-4 pl-6 font-medium text-white">{p.name}</td>
-              <td className="p-4 text-gray-400 font-light truncate max-w-xs">
-                {p.description}
-              </td>
-              <td className="p-4 pr-6 text-right flex gap-2 justify-end">
-                <button
-                  onClick={() => onEdit(p)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <PencilSquare />
-                </button>
-                <button
-                  onClick={() => onDelete(p.id)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <Trash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
+    return;
+    <ProductTab onDelete={onDelete} onEdit={onEdit} products={products} />;
   }
 
   if (activeTab === "skus") {
-    return (
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-gray-900 text-xs text-gray-500 uppercase font-light">
-            <th className="p-4 pl-6">Variante (SKU)</th>
-            <th className="p-4">Stock</th>
-            <th className="p-4">Precio</th>
-            <th className="p-4 pr-6 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-900/50">
-          {skus.map((s) => (
-            <tr key={s.id} className="text-gray-300 hover:bg-gray-900/10">
-              <td className="p-4 pl-6 font-medium text-white">
-                {s.product.name}
-              </td>
-              <td className="p-4">
-                <span
-                  className={s.stock <= 5 ? "text-amber-400" : "text-gray-300"}
-                >
-                  {s.stock} u.
-                </span>
-              </td>
-              <td className="p-4 text-purple-400 font-medium">
-                ${s.price} UYU
-              </td>
-              <td className="p-4 pr-6 text-right flex gap-2 justify-end">
-                <button
-                  onClick={() => onEdit(s)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <PencilSquare />
-                </button>
-                <button
-                  onClick={() => onDelete(s.id)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <Trash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
+    return <SkuTab onDelete={onDelete} onEdit={onEdit} skus={skus} />;
   }
   if (activeTab === "categories")
     return (
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-gray-900 text-xs text-gray-500 uppercase font-light">
-            <th className="p-4 pl-6">ID</th>
-            <th className="p-4">Nombre</th>
-            <th className="p-4 pr-6 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-900/50">
-          {categories.map((item) => (
-            <tr key={item.id} className="text-gray-300 hover:bg-gray-900/10">
-              <td className="p-4 pl-6 text-gray-500 font-mono">{item.id}</td>
-              <td className="p-4 font-medium text-white">{item.name}</td>
-              <td className="p-4 pr-6 text-right flex gap-2 justify-end">
-                <button
-                  onClick={() => onEdit(item)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <PencilSquare />
-                </button>
-                <button
-                  onClick={() => onDelete(item.id)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <Trash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <CategoryTab
+        onDelete={onDelete}
+        onEdit={onEdit}
+        categories={categories}
+      />
     );
 
   if (activeTab === "brands")
-    return (
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-gray-900 text-xs text-gray-500 uppercase font-light">
-            <th className="p-4 pl-6">ID</th>
-            <th className="p-4">Nombre</th>
-            <th className="p-4 pr-6 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-900/50">
-          {brands.map((item) => (
-            <tr key={item.id} className="text-gray-300 hover:bg-gray-900/10">
-              <td className="p-4 pl-6 text-gray-500 font-mono">{item.id}</td>
-              <td className="p-4 font-medium text-white">{item.name}</td>
-              <td className="p-4 pr-6 text-right flex gap-2 justify-end">
-                <button
-                  onClick={() => onEdit(item)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <PencilSquare />
-                </button>
-                <button
-                  onClick={() => onDelete(item.id)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <Trash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
+    return <BrandTab onDelete={onDelete} onEdit={onEdit} brands={brands} />;
 
   if (activeTab === "orders")
     return (
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-gray-900 text-xs text-gray-500 uppercase font-light">
-            <th className="p-4 pl-6">ID</th>
-            <th className="p-4">Metodo de pago</th>
-            <th className="p-4">Monto</th>
-            <th className="p-4">Estado</th>
-            <th className="p-4">Direccion de envio</th>
-            <th className="p-4 pr-6 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-900/50">
-          {orders.map((order) => (
-            <tr key={order.id} className="text-gray-300 hover:bg-gray-900/10">
-              <td className="p-4 pl-6 text-gray-500 font-mono">{order.id}</td>
-              <td className="p-4 font-medium text-white">
-                {order.paymentMethod}
-              </td>
-              <td className="p-4 font-medium text-white">
-                {order.totalAmount} UYU
-              </td>
-              <td className="p-4 font-medium text-white">{order.status}</td>
-              <td className="p-4 font-medium text-white">
-                {order.shippingAddress}
-              </td>
-              <td className="p-4 pr-6 text-right flex gap-2 justify-end">
-                <button
-                  onClick={() => {
-                    setSelectedOrder(selectOrder(orders, order.id));
-                    onViewMore(order);
-                  }}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <ChevronUp />
-                </button>
-                <button
-                  onClick={() => onDelete(order.id)}
-                  className="p-2 text-gray-400 hover:text-red-400 bg-gray-900 rounded-lg border border-gray-800"
-                >
-                  <Trash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <OrderTab
+        onDelete={onDelete}
+        onViewMore={onViewMore}
+        orders={orders}
+        setSelectedOrder={setSelectedOrder}
+      />
     );
 };
 
