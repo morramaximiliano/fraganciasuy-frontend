@@ -17,6 +17,7 @@ const CartState = ({ children }) => {
 
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [hasMerged, setHasMerged] = useState(false);
 
   const syncCart = async () => {
     if (authLoading || !isAuthenticated || isInitialLoading) return;
@@ -34,7 +35,7 @@ const CartState = ({ children }) => {
   };
 
   const fetchCartFromDb = async () => {
-    if (authLoading || !isAuthenticated) {
+    if (authLoading || !isAuthenticated || hasMerged) {
       setIsInitialLoading(false);
       return;
     }
@@ -77,6 +78,7 @@ const CartState = ({ children }) => {
       totalCount = mergedCart.reduce((acc, curr) => acc + curr.qty, 0);
       setCart(mergedCart);
       setItemCount(totalCount);
+      setHasMerged(true);
     } catch (error) {
       console.error(
         "🚨 Error al recuperar/fusionar el carrito con la BD:",
@@ -94,15 +96,15 @@ const CartState = ({ children }) => {
 
   useEffect(() => {
     fetchCartFromDb();
-  }, [isAuthenticated, authLoading, isInitialLoading]);
+  }, [isAuthenticated, authLoading]);
 
   useEffect(() => {
-    if (isInitialLoading || !isAuthenticated) return;
+    if (isInitialLoading || !isAuthenticated || !hasMerged) return;
     const delayDebounceFn = setTimeout(() => {
       syncCart();
     }, 1500);
     return () => clearTimeout(delayDebounceFn);
-  }, [cart, isAuthenticated, authLoading, isInitialLoading]);
+  }, [cart, isAuthenticated, authLoading, isInitialLoading, hasMerged]);
 
   const addToCart = (name, id, brand, stock, price, sizeMl, imageUrl) => {
     const item = {
