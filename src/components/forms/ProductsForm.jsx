@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProductsForm = ({ register, errors }) => {
+const ProductsForm = ({ register, errors, categories, brands }) => {
   return (
     <>
       <div>

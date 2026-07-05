@@ -79,10 +79,19 @@ const AdminModalForm = ({
             <CategoryForms register={register} errors={errors} />
           )}
           {activeTab === "products" && (
-            <ProductsForm register={register} errors={errors} />
+            <ProductsForm
+              register={register}
+              errors={errors}
+              categories={categories}
+              brands={brands}
+            />
           )}
           {activeTab === "skus" && (
-            <SkusForms register={register} errors={errors} />
+            <SkusForms
+              register={register}
+              errors={errors}
+              products={products}
+            />
           )}
           <div className="pt-4 border-t border-gray-800 flex justify-end gap-3">
             <button

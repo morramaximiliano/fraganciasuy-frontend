@@ -1,6 +1,6 @@
 import React from "react";
 
-const SkusForms = ({ register, errors }) => {
+const SkusForms = ({ register, errors, products }) => {
   return (
     <>
       <div>
