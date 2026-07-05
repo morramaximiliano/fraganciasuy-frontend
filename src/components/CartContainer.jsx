@@ -39,12 +39,13 @@ const CartContainer = () => {
     );
   }
 
-  {
-    isInitialLoading && <Spinner />;
-  }
-
   return (
     <div className="bg-gray-950">
+      {isInitialLoading && (
+        <div className="flex justify-center p-10">
+          <Spinner size="xl" />
+        </div>
+      )}
       <div className="max-w-4xl mx-auto p-6 min-h-screen bg-gray-950">
         <motion.div {...fadeIn}>
           <Card className="relative bg-gray-950 border-gray-900 p-2 sm:p-4">
