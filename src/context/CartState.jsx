@@ -135,3 +135,6 @@ const CartState = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
+export const useCart = () => useContext(CartContext);
+export default CartState;
