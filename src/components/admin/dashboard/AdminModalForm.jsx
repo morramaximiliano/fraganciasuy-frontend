@@ -32,7 +32,7 @@ const AdminModalForm = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: getResolver(),
     mode: "onTouch",
@@ -66,7 +66,9 @@ const AdminModalForm = ({
 
         <form
           onSubmit={handleSubmit(
-            (data) => onSubmit(data),
+            async (data) => {
+              await onSubmit(data);
+            },
             (errors) =>
               console.log("🚨 ZOD RECHAZÓ EL FORMULARIO. Errores:", errors),
           )}
@@ -104,9 +106,10 @@ const AdminModalForm = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 rounded-xl text-sm font-medium text-white"
+              disabled={isSubmitting}
+              className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 rounded-xl text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-purple-600"
             >
-              Guardar
+              {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
           </div>
         </form>

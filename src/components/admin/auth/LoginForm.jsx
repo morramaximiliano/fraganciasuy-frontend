@@ -68,6 +68,26 @@ function LoginForm() {
           Ingresa a tu cuenta para continuar
         </p>
 
+        <div className="rounded-md border border-blue-100 bg-blue-50/70 px-4 py-3 text-xs text-gray-600 dark:border-gray-700 dark:bg-gray-700/40 dark:text-gray-300">
+          <p className="mb-2 font-medium uppercase tracking-wide text-blue-700 dark:text-blue-300">
+            Acceso de demostración
+          </p>
+          <div className="space-y-1">
+            <p>
+              <span className="text-gray-500 dark:text-gray-400">Correo:</span>{" "}
+              <span className="font-mono text-gray-700 dark:text-gray-200">
+                admin@admin.com
+              </span>
+            </p>
+            <p>
+              <span className="text-gray-500 dark:text-gray-400">Contraseña:</span>{" "}
+              <span className="font-mono text-gray-700 dark:text-gray-200">
+                admin1234
+              </span>
+            </p>
+          </div>
+        </div>
+
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <div className="mb-2 block">
